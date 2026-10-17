@@ -55,7 +55,7 @@ in compressed iTXt. This repository defines the format and interoperability
 expectations; it is not a Codex skill or an Illustrator/Inkscape plugin.
 
 - [Normative specification: wire v1, draft 0.1](SPEC.md)
-- [日本語仕様ガイド](SPEC.ja.md) (informative translation)
+- [日本語仕様全文訳](SPEC.ja.md) (full informative translation)
 - [Safe SVG profile](profiles/safe-svg-v1.md)
 - [Interoperability and implementation guidance](IMPLEMENTATIONS.md)
 - [Fixture catalog and test instructions](fixtures/README.md)
@@ -78,7 +78,11 @@ python tools/build_fixtures.py --check
 ```
 
 Changes are proposed through issues or pull requests. The English SPEC.md is
-normative; the Japanese guide is informative. Draft revisions must identify wire-format impact. Wire v1 has no
+normative; SPEC.ja.md is its full informative Japanese translation. Draft revisions must identify wire-format impact. Wire v1 has no
 embedded version field; an incompatible successor needs a new documented keyword.
 See [CONTRIBUTING.md](CONTRIBUTING.md). All original documents, tools and fixtures
 in this repository are MIT licensed; upstream standards retain their own licenses.
+
+English and Japanese documentation must stay fully synchronized in the same
+change. See the repository-wide [documentation rules](AGENTS.md) and
+[contribution guide](CONTRIBUTING.md).
