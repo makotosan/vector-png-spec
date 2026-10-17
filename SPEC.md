@@ -1,5 +1,7 @@
 # vector-png wire v1 — draft 0.1
 
+[日本語全文参考訳](SPEC.ja.md)
+
 Status: experimental draft, 2026-10-18. This is an application convention, not
 a W3C standard, registered media type, or registered PNG text keyword. English
 text in this document is normative. MUST, MUST NOT, SHOULD and MAY denote

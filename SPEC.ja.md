@@ -1,8 +1,10 @@
 # vector-png wire v1 — draft 0.1
 
+[English normative specification](SPEC.md)
+
 状態: 2026-10-18 時点の実験的なドラフトです。これはアプリケーション上の取り決めであり、
 W3C 標準、登録済みメディアタイプ、登録済み PNG テキストキーワードではありません。
-[英語版 SPEC.md](SPEC.md) の本文を正規仕様とします。本書はその全文の日本語訳です。
+[英語版 SPEC.md](SPEC.md) の本文を正規仕様とします。本書はその全文の日本語参考訳です。
 MUST、MUST NOT、SHOULD、MAY は、このドラフト内の必須要件、禁止事項、推奨事項、
 選択可能な事項をそれぞれ示します。
 

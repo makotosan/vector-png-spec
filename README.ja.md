@@ -47,10 +47,11 @@ SVG を組み合わせることで、第三者が対応ツールを実装でき�
 ## このリポジトリについて
 
 SVG を圧縮 iTXt に埋め込んだ PNG の、**アプリに依存しないドラフト仕様**です。
-Codex スキルや Illustrator／Inkscape 拡張の実装とは分けて管理します。
+このリポジトリは保存形式と相互運用への期待を定義するものであり、
+Codex スキルや Illustrator／Inkscape プラグインではありません。
 
-- [正式な仕様本文（英語・wire v1／draft 0.1）](SPEC.md)
-- [日本語仕様全文訳](SPEC.ja.md)
+- [正規仕様（英語・wire v1／draft 0.1）](SPEC.md)
+- [日本語仕様全文訳](SPEC.ja.md)（全文の参考訳）
 - [安全な SVG の対応プロファイル](profiles/safe-svg-v1.md)
 - [実装・相互運用のガイド](IMPLEMENTATIONS.md)
 - [共通サンプルとテスト](fixtures/README.md)
