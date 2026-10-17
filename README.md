@@ -23,6 +23,31 @@ every native application feature or editing history is not guaranteed. Image
 editors and sharing services that strip embedded metadata also remove the SVG
 needed for further vector editing.
 
+## An open specification for AI-assisted editing
+
+Embedding editable data in PNG has precedents, including Adobe Fireworks PNG and
+draw.io editable PNG. [Fireworks uses PNG as its native format](https://helpx.adobe.com/pdf/fireworks_reference.pdf);
+[draw.io embeds its diagram XML in PNG](https://www.drawio.com/docs/manual/export/xml-in-png/).
+These approaches follow their respective applications' editing models.
+Importantly, [draw.io publishes its source under Apache-2.0](https://github.com/jgraph/drawio)
+and [documents its file format](https://github.com/jgraph/drawio/wiki/File-Format).
+An application-specific format is not necessarily closed or proprietary.
+
+**vector-png is being developed as an open specification independent of any one
+application.** Its specification, fixtures and validation tools are published
+under MIT. Combining standard PNG and SVG is intended to let third parties build
+compatible tools. It remains an experimental draft, not a standard issued by a
+standards body.
+
+**Using text-based SVG as the editable source also makes this design a natural
+fit for AI-assisted generation and editing.** With compatible extraction tools,
+an AI can modify shapes, colors and layout as code, then use tools to render and
+validate the result and update both PNG and SVG together. People can review the
+image while AI tools work with its structured source. This is a design rationale,
+not a measured claim of better AI editing accuracy than other formats. Simply
+sending the PNG as an image to an AI does not ensure access to its embedded SVG;
+compatible extraction and update tools are required.
+
 ## About this repository
 
 An application-independent **draft** for PNG files containing editable SVG source
