@@ -39,8 +39,8 @@ under MIT. Combining standard PNG and SVG is intended to let third parties build
 compatible tools. It remains an experimental draft, not a standard issued by a
 standards body.
 
-**Using text-based SVG as the editable source also makes this design a natural
-fit for AI-assisted generation and editing.** With compatible extraction tools,
+**Using text-based SVG as the editable source is a design we believe is well suited
+to AI-assisted generation and editing.** With compatible extraction tools,
 an AI can modify shapes, colors and layout as code, then use tools to render and
 validate the result and update both PNG and SVG together. People can review the
 image while AI tools work with its structured source. This is a design rationale,
@@ -78,7 +78,7 @@ python tools/build_fixtures.py --check
 ```
 
 Changes are proposed through issues or pull requests. The English SPEC.md is
-normative; draft revisions must identify wire-format impact. Wire v1 has no
+normative; the Japanese guide is informative. Draft revisions must identify wire-format impact. Wire v1 has no
 embedded version field; an incompatible successor needs a new documented keyword.
 See [CONTRIBUTING.md](CONTRIBUTING.md). All original documents, tools and fixtures
 in this repository are MIT licensed; upstream standards retain their own licenses.
