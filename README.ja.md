@@ -50,7 +50,7 @@ SVG を圧縮 iTXt に埋め込んだ PNG の、**アプリに依存しないド
 Codex スキルや Illustrator／Inkscape 拡張の実装とは分けて管理します。
 
 - [正式な仕様本文（英語・wire v1／draft 0.1）](SPEC.md)
-- [日本語仕様ガイド](SPEC.ja.md)
+- [日本語仕様全文訳](SPEC.ja.md)
 - [安全な SVG の対応プロファイル](profiles/safe-svg-v1.md)
 - [実装・相互運用のガイド](IMPLEMENTATIONS.md)
 - [共通サンプルとテスト](fixtures/README.md)
@@ -70,10 +70,14 @@ python -m unittest discover -s tests -v
 python tools/build_fixtures.py --check
 ```
 
-仕様はドラフトです。英語の SPEC.md を正とし、日本語ガイドは理解を助ける資料です。
+仕様はドラフトです。英語の SPEC.md を正とし、SPEC.ja.md はその全文の参考訳です。
 変更は Issue または Pull Request で提案してください。ドラフトの改訂では保存形式への
 互換性の影響を明記します。wire v1 はバージョン番号をファイル内に持たず、
 互換性のない後継形式には、新たに文書化したキーワードが必要です。
-[CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
+[貢献ガイド](CONTRIBUTING.ja.md)を参照してください。
 独自に作成した仕様・ツール・テストデータは MIT ライセンスで公開します。
 参照先の標準仕様には、それぞれのライセンスが適用されます。
+
+英語と日本語のドキュメントは、同じ変更内で全文の内容を同期させなければなりません。
+プロジェクト全体の[ドキュメントルール](AGENTS.md)と
+[貢献ガイド](CONTRIBUTING.ja.md)を参照してください。
