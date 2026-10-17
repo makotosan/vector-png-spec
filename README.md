@@ -2,6 +2,29 @@
 
 [日本語](README.ja.md)
 
+## Why vector-png?
+
+PNG is easy to view, share and paste into documents. But exporting artwork as an
+ordinary PNG leaves no vector source for editing individual shapes or text.
+Later changes require keeping a separate SVG or native project file and tracking
+which source belongs to which image. When only the shared PNG remains, finding
+the source—or recreating the artwork—can become the next task.
+
+**vector-png keeps the PNG preview and editable SVG source in one file.**
+Ordinary image viewers display the PNG; compatible tools can extract the embedded
+SVG, edit it, and update the source and preview together. For example, changing
+the colors or shapes in a diagram used in a document need not start with a search
+for a separate source file.
+
+This specification gives applications a shared way to implement that workflow.
+A common container can connect creation, sharing and editing across different
+tools. Editability is limited to what the stored SVG can represent; preserving
+every native application feature or editing history is not guaranteed. Image
+editors and sharing services that strip embedded metadata also remove the SVG
+needed for further vector editing.
+
+## About this repository
+
 An application-independent **draft** for PNG files containing editable SVG source
 in compressed iTXt. This repository defines the format and interoperability
 expectations; it is not a Codex skill or an Illustrator/Inkscape plugin.
