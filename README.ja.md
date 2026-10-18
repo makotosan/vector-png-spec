@@ -53,6 +53,7 @@ Codex スキルや Illustrator／Inkscape プラグインではありません�
 - [正規仕様（英語・wire v1／draft 0.1）](SPEC.md)
 - [日本語仕様全文訳](SPEC.ja.md)（全文の参考訳）
 - [安全な SVG の対応プロファイル](profiles/safe-svg-v1.md)
+- [SVG 正規化の入力プロファイル](profiles/svg-normalization-v1.ja.md)
 - [実装・相互運用のガイド](IMPLEMENTATIONS.md)
 - [共通サンプルとテスト](fixtures/README.md)
 
@@ -82,3 +83,4 @@ python tools/build_fixtures.py --check
 英語と日本語のドキュメントは、同じ変更内で全文の内容を同期させなければなりません。
 プロジェクト全体の[ドキュメントルール](AGENTS.md)と
 [貢献ガイド](CONTRIBUTING.ja.md)を参照してください。
+

@@ -31,3 +31,35 @@ profile, limits, renderer and known deviations. The fixture checker here is a
 test-data sanity check, not a production SVG sanitizer, full PNG decoder, or
 complete certification suite. Rendering/native-app integration tests belong in
 the implementing repositories.
+
+## Optional normalized import
+
+[日本語全文参考訳](IMPLEMENTATIONS.ja.md)
+
+[SVG Normalization Profile v1](profiles/svg-normalization-v1.md) is an input-only
+profile. Implementations may adopt it without changing wire v1 or widening the
+safe-svg-v1 allowlist. Validate the original, resolve the restricted CSS cascade,
+materialize rect rx/ry, expand the restricted triangle arrow markers, migrate
+accessible names/descriptions, validate the output, compare controlled renders,
+and publish a separate SVG/report pair without modifying input. Keep extraction
+byte-preserving; never normalize automatically on extract.
+
+CSS rx/ry requires an SVG2-capable before-renderer. A renderer silently ignoring
+these declarations cannot validate appearance preservation. Marker expansion is
+deliberately limited to the profile's explicit triangle and open linear path
+forms. Other markers, curves or unsupported styling must fail rather than lose
+artwork. Metadata migration can report semantic losses; it does not promise full
+native editing or accessibility fidelity.
+
+Future CLI proposals are `normalize input.svg normalized.svg --report report.json`
+and `convert input.svg output.png --report report.json`. They are not implemented
+here or automatically added to the Python CLI. The latter would normalize first,
+then use the writer/container checks and report container, profile, rendering and
+authenticity separately. Support claims must pin and audit the new profile.
+
+The test-only transformer and render adapter in tools exercise fixtures, not
+arbitrary uploads. They are not a production security boundary or a shipped
+normalization CLI. No implementation compatibility reference is automatically
+advanced by this specification change. Compatibility impact: optional input
+processing only; existing PNG fixtures, keyword and stored SVG profile unchanged.
+

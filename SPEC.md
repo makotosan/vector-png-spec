@@ -96,6 +96,13 @@ wire v1. Readers MUST inspect the actual source and MUST NOT infer safety from
 the keyword, file extension or a claimed profile name. A container-valid file
 can be unsafe or unsupported by an application's profile.
 
+The optional [SVG Normalization Profile v1](profiles/svg-normalization-v1.md)
+defines an explicit import path for restricted CSS-styled SVG. It resolves CSS,
+migrates accessibility metadata and expands restricted diagram arrows before
+revalidating safe-svg-v1 output. It does not relax safe-svg-v1, alter wire v1 or
+normalize extracted source automatically. Original source and conversion reports
+remain separate from the embedded normalized SVG.
+
 ## 6. Preview, viewport and editing
 
 PNG IHDR width/height define the preview canvas in pixels. Writers MUST render
@@ -148,3 +155,4 @@ a specification commit/tag until a stable version is published.
 Implementations SHOULD report supported wire version, SVG profile, raster
 subset, resource limits and preview-verification policy separately. No claim of
 complete conformance may be based only on this repository's finite fixture set.
+

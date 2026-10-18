@@ -57,6 +57,7 @@ expectations; it is not a Codex skill or an Illustrator/Inkscape plugin.
 - [Normative specification: wire v1, draft 0.1](SPEC.md)
 - [日本語仕様全文訳](SPEC.ja.md) (full informative translation)
 - [Safe SVG profile](profiles/safe-svg-v1.md)
+- [SVG normalization input profile](profiles/svg-normalization-v1.md)
 - [Interoperability and implementation guidance](IMPLEMENTATIONS.md)
 - [Fixture catalog and test instructions](fixtures/README.md)
 
@@ -86,3 +87,4 @@ in this repository are MIT licensed; upstream standards retain their own license
 English and Japanese documentation must stay fully synchronized in the same
 change. See the repository-wide [documentation rules](AGENTS.md) and
 [contribution guide](CONTRIBUTING.md).
+
