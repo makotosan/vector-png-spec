@@ -52,3 +52,13 @@ tables, examples and references. No wire-format, safe-svg-v1 allowlist or existi
 PNG-fixture acceptance change is introduced. The test transformer is not a
 production normalization CLI or a security certification.
 
+## Final review, 2026-10-19
+
+All 10 local unittest tests passed after adding a regression for unused marker
+definitions. Unsupported viewBox, orientation, zero viewport size and nontriangle
+geometry are now rejected even without a rendered marker use. A valid unused
+triangle definition remains accepted. The 24 normalization catalog cases, the
+original 21 PNG cases and golden normalized outputs are unchanged. This enforces
+the existing profile's closed-input rule; it does not broaden the profile or
+change wire v1. This addition and its Japanese translation were checked for parity.
+

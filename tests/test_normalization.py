@@ -80,6 +80,23 @@ class NormalizationTests(unittest.TestCase):
         after = root.find('.//' + ns + 'path[@id="qr"]')
         self.assertEqual(before.get('d'), after.get('d'))
 
+    def test_unused_marker_definitions_are_validated(self):
+        # Unused content must not bypass the closed input profile.
+        prefix = '<svg xmlns="http://www.w3.org/2000/svg"><defs>'
+        suffix = '</defs></svg>'
+        triangle = '<path d="M0,0 L12,6 L0,12 Z" fill="black"/>'
+        valid = '<marker id="m" markerWidth="12" markerHeight="12" orient="auto">'+triangle+'</marker>'
+        normalize_structure((prefix+valid+suffix).encode())
+        for definition in [
+            '<marker id="m" viewBox="0 0 12 12"/>',
+            valid.replace('orient="auto"', 'orient="auto-start-reverse"'),
+            valid.replace('markerWidth="12"', 'markerWidth="0"'),
+            valid.replace(triangle, '<circle r="5"/>'),
+        ]:
+            with self.subTest(definition=definition), self.assertRaises(Rejected) as caught:
+                normalize_structure((prefix+definition+suffix).encode())
+            self.assertEqual(caught.exception.code, 'unsupported-css')
+
     def test_resource_bounds(self):
         samples = [b' ' * 1_000_001,
                    ('<svg xmlns="http://www.w3.org/2000/svg">' + '<g>' * 33 + '</g>' * 33 + '</svg>').encode(),

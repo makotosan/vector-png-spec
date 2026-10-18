@@ -288,6 +288,30 @@ def path_points(d):
     return points
 
 
+def marker_definition(src, root, parent, computed):
+    """Validate every definition, including definitions with no rendered uses."""
+    owner = parent.get(src)
+    if owner is None or local(owner) != 'defs' or parent.get(owner) is not root:
+        reject('unsupported-css', 'Marker placement')
+    allowed = {'id', 'markerWidth', 'markerHeight', 'refX', 'refY', 'orient', 'markerUnits'}
+    if set(src.attrib) - allowed or src.get('orient') != 'auto' or len(src) != 1 or local(src[0]) != 'path':
+        reject('unsupported-css', 'Marker definition')
+    w, h = scalar(src.get('markerWidth', ''), 0), scalar(src.get('markerHeight', ''), 0)
+    if w <= 0 or h <= 0:
+        reject('unsupported-css')
+    rx, ry = scalar(src.get('refX', '0'), 0, w), scalar(src.get('refY', '0'), 0, h)
+    child = src[0]
+    if set(child.attrib) - {'d', 'fill'} or not re.fullmatch(r'M\s*0\s*,?\s*0\s+L\s*' + re.escape(f'{w:g}') + r'\s*,?\s*' + re.escape(f'{h/2:g}') + r'\s+L\s*0\s*,?\s*' + re.escape(f'{h:g}') + r'\s+Z', child.get('d', '')):
+        reject('unsupported-css', 'Only viewport-contained triangle markers')
+    paint = computed.get(child, {}).get('fill', 'black')
+    if paint.startswith('url(') or paint == 'none':
+        reject('unsupported-css')
+    unit = src.get('markerUnits', 'strokeWidth')
+    if unit not in {'strokeWidth', 'userSpaceOnUse'}:
+        reject('unsupported-css')
+    return rx, ry, child, paint, unit
+
+
 def normalize_structure(raw):
     """Analysis-only fixture transformation. Never returns a success report."""
     root = parse(raw)
@@ -348,6 +372,8 @@ def normalize_structure(raw):
             changes['class_attributes'] += 1
             del node.attrib['class']
         node.attrib.pop('style', None)
+    markers = {node: marker_definition(node, root, parent, computed)
+               for node in root.iter() if local(node) == 'marker'}
     accessibility = []
     for node in list(root.iter()):
         if local(node) == 'style':
@@ -395,24 +421,7 @@ def normalize_structure(raw):
         if local(node) != 'path' or computed[node].get('fill', 'black') != 'none':
             reject('unsupported-css', 'Marker host')
         src = ids[marker[5:-1]]
-        if local(parent.get(src)) != 'defs' or parent.get(parent.get(src)) is not root:
-            reject('unsupported-css', 'Marker placement')
-        allowed = {'id', 'markerWidth', 'markerHeight', 'refX', 'refY', 'orient', 'markerUnits'}
-        if set(src.attrib) - allowed or src.get('orient') != 'auto' or len(src) != 1 or local(src[0]) != 'path':
-            reject('unsupported-css', 'Marker definition')
-        w, h = scalar(src.get('markerWidth', ''), 0), scalar(src.get('markerHeight', ''), 0)
-        if w <= 0 or h <= 0:
-            reject('unsupported-css')
-        rx, ry = scalar(src.get('refX', '0'), 0, w), scalar(src.get('refY', '0'), 0, h)
-        child = src[0]
-        if set(child.attrib) - {'d', 'fill'} or not re.fullmatch(r'M\s*0\s*,?\s*0\s+L\s*' + re.escape(f'{w:g}') + r'\s*,?\s*' + re.escape(f'{h/2:g}') + r'\s+L\s*0\s*,?\s*' + re.escape(f'{h:g}') + r'\s+Z', child.get('d', '')):
-            reject('unsupported-css', 'Only viewport-contained triangle markers')
-        paint = computed.get(child, {}).get('fill', 'black')
-        if paint.startswith('url(') or paint == 'none':
-            reject('unsupported-css')
-        unit = src.get('markerUnits', 'strokeWidth')
-        if unit not in {'strokeWidth', 'userSpaceOnUse'}:
-            reject('unsupported-css')
+        rx, ry, child, paint, unit = markers[src]
         scale = scalar(computed[node].get('stroke-width', '1'), 0, px=True) if unit == 'strokeWidth' else 1
         points = path_points(node.get('d', ''))
         (x0, y0), (x, y) = points[-2:]
