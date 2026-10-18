@@ -42,6 +42,8 @@ python tools/build_normalization_fixtures.py --check
 build_normalization_fixtures.py regenerates only cases.json, without external
 dependencies. Golden SVG/report and QR changes must be reviewed deliberately;
 they must not be regenerated automatically to make a failed test pass.
+The fixture directory is pinned to LF by .gitattributes so Git checkout settings
+cannot change input digests, golden SVG bytes or deterministic JSON catalogs.
 
 ## Independent optional SVG2 rendering
 

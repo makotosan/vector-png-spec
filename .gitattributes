@@ -1,0 +1,2 @@
+# Golden SVG bytes and input digests must not vary with checkout settings.
+fixtures/normalization/* text eol=lf

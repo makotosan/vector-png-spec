@@ -39,6 +39,8 @@ python tools/build_normalization_fixtures.py --check
 build_normalization_fixtures.py は外部依存なしで cases.json だけを再生成します。
 期待 SVG・レポート・QR の変更は意図的にレビューしなければなりません。
 失敗したテストを通すために自動再生成してはいけません。
+このデータフォルダーは .gitattributes で LF に固定し、Git のチェックアウト設定で
+入力ダイジェスト、期待 SVG のバイト列、決定的な JSON カタログが変わることを防ぎます。
 
 ## 独立した任意の SVG2 描画検証
 
