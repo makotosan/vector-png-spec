@@ -35,7 +35,10 @@ def cases():
         dict(id='missing-paint-target', input=svg('<rect fill="url(#missing)"/>'), expect='invalid-reference'),
         dict(id='wrong-paint-target', input=svg('<rect id="paint" fill="url(#paint)"/>'), expect='invalid-reference'),
         dict(id='recursive-definition', input=svg('<defs><clipPath id="c"><rect clip-path="url(#c)"/></clipPath></defs>'), expect='invalid-reference'),
-        dict(id='unsupported-marker-host', input=svg('<defs><marker id="a" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="black"/></marker></defs><path d="M0 0 C1 2 3 4 5 6" fill="none" marker-end="url(#a)"/>'), expect='unsupported-css'),
+        dict(id='unsupported-marker-host', input=svg('<defs><marker id="a" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="black"/></marker></defs><path d="M0 0 C5 6 5 6 5 6" fill="none" marker-end="url(#a)"/>'), expect='unsupported-css'),
+        dict(id='letter-spacing', input=svg('<style>.brand {font-family: sans-serif; font-size: 20px; letter-spacing: 2px; fill: #222}</style><text class="brand" x="10" y="40">ACME</text>'), expect='accept'),
+        dict(id='curved-marker-host', input=svg('<title id="t">Curved arrow</title><defs><marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#363636"/></marker><style>.arrow {fill: none; stroke: black; stroke-width: 2; marker-end: url(#arrow)}</style></defs><path class="arrow" d="M20 90 C60 90 80 30 130 30"/>', 'role="img" aria-labelledby="t"'), expect='accept'),
+        dict(id='font-family-system-names', input=svg('<style>text {font-family: -apple-system,BlinkMacSystemFont,"Yu Gothic",sans-serif; font-size: 16px}</style><text x="10" y="40">Text</text>'), expect='accept'),
     ]
 
 

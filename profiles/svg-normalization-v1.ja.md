@@ -6,6 +6,11 @@
 MUST、MUST NOT、SHOULD、MAY は SPEC.md と同じ意味です。本書は全文の参考訳です。
 汎用の CSS サニタイザーでも safe-svg-v1 の拡張でもありません。
 
+改訂（2026-10-28、Issue #3）: `letter-spacing` を第3節のプロパティおよび
+safe-svg-v1 の属性として認め、曲線（Cセグメント）の marker-end ホストを
+第3.1節の接線規則のもとで認め、第3節で受理する font-family の名前形式を
+明確化しました。本参考訳にも同じ改訂を反映しています。
+
 ## 1. 目的と互換性
 
 正規化実装は、限定された CSS 付き SVG を [safe-svg-v1](safe-svg-v1.md) に適合する
@@ -68,9 +73,10 @@ XML 属性の重複は不正な XML です。有効な CSS 宣言の重複は第
 | fill-rule | `nonzero`、`evenodd` |
 | stroke-linecap | `butt`、`round`、`square` |
 | stroke-linejoin | `miter`、`round`、`bevel` |
-| font-family | カンマ区切りの1個以上の ASCII 名。引用符なしの語を空白で区切った名前、または引用符付きの名前。エスケープ不可 |
+| font-family | カンマ区切りの1個以上の ASCII 名。エスケープ不可。名前は引用符付きの名前か、空白で区切った1個以上の引用符なしの語。引用符付きの名前は一重または二重引用符を使い、区切りの引用符とバックスラッシュを除く印字可能 ASCII を含む。引用符なしの語は `-` で始まってもよい（MAY）識別子（例: `-apple-system`） |
 | font-weight | `normal`、`bold`、または 100、200、…、900 |
 | font-style | `normal`、`italic`、`oblique` |
+| letter-spacing | 符号付き十進数。任意で `px` |
 | text-anchor | `start`、`middle`、`end` |
 | dominant-baseline | `auto`、`alphabetic`、`middle`、`central`、`hanging`、`text-before-edge`、`text-after-edge` |
 | clip-path | `none`、またはローカル clipPath への厳密な `url(#ID)` |
@@ -104,8 +110,13 @@ orient は `auto`（MUST）です。markerUnits は `strokeWidth`（既定）ま
 none やリソース参照にしてはなりません（MUST）。
 
 marker-end は、fill が none、サブパスが1個の開いた path のみに適用し（MUST）、
-絶対座標 M／L／H／V の線分を使います（暗黙の座標繰り返しは可能）。最終線分は
-長さがゼロであってはなりません。対象 path の transform、opacity、clip-path 宣言は
+絶対座標 M／L／H／V／C の線分を使います（暗黙の座標繰り返しは可能）。
+S、Q、T およびすべての相対形式を含むその他の path コマンドは拒否しなければ
+なりません（MUST）。最終線分はゼロでない接線を持たなければなりません（MUST）。
+L、H、V 線分では接線は線分の方向であり、C 線分では接線は第2制御点から終点への
+ベクトルとし、それがゼロの場合は第1制御点から終点へのベクトルにフォールバック
+します。終点が両方の制御点と一致する C 線分は拒否しなければなりません（MUST）。
+対象 path の transform、opacity、clip-path 宣言は
 基準では未対応であり、失敗させなければなりません（MUST）。正規化実装は、最終接線を
 計算し、その方向に三角形を向け、strokeWidth 単位なら計算済み stroke-width（既定1）で
 拡大縮小し、refX／refY 分をずらし、通常の path／g を対象 path の直後に挿入しなければ

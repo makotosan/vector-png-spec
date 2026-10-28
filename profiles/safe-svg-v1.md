@@ -17,7 +17,7 @@ Allowed unqualified attributes:
 id x y x1 y1 x2 y2 cx cy r rx ry width height viewBox preserveAspectRatio d points
 transform fill fill-opacity fill-rule stroke stroke-width stroke-opacity
 stroke-linecap stroke-linejoin stroke-miterlimit stroke-dasharray stroke-dashoffset
-opacity font-family font-size font-weight font-style text-anchor dominant-baseline
+opacity font-family font-size font-weight font-style letter-spacing text-anchor dominant-baseline
 dx dy rotate offset stop-color stop-opacity gradientUnits gradientTransform
 spreadMethod fx fy fr clip-path clipPathUnits
 ```
@@ -48,3 +48,9 @@ seconds. This is not an OS sandbox or hard memory quota.
 
 Wider SVG support requires a separately documented profile/security policy.
 Adapters MUST NOT silently remove unsupported artwork and claim lossless editing.
+
+Amendment (2026-10-28, Issue #3): `letter-spacing` was added to the allowed
+attributes above. It is a rendering-supported text property, and
+svg-normalization-v1 admits it as a CSS property under the same amendment.
+No other v1 verdict changes: a v1 validator still rejects `class`, `style`
+elements and CSS in v1 sources.

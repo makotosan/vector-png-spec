@@ -18,12 +18,12 @@ import tinycss2
 NS = 'http://www.w3.org/2000/svg'
 ET.register_namespace('', NS)
 TAGS = set('svg g defs title desc path rect circle ellipse line polyline polygon text tspan linearGradient radialGradient stop clipPath'.split())
-ATTRS = set('id x y x1 y1 x2 y2 cx cy r rx ry width height viewBox preserveAspectRatio d points transform fill fill-opacity fill-rule stroke stroke-width stroke-opacity stroke-linecap stroke-linejoin stroke-miterlimit stroke-dasharray stroke-dashoffset opacity font-family font-size font-weight font-style text-anchor dominant-baseline dx dy rotate offset stop-color stop-opacity gradientUnits gradientTransform spreadMethod fx fy fr clip-path clipPathUnits'.split())
+ATTRS = set('id x y x1 y1 x2 y2 cx cy r rx ry width height viewBox preserveAspectRatio d points transform fill fill-opacity fill-rule stroke stroke-width stroke-opacity stroke-linecap stroke-linejoin stroke-miterlimit stroke-dasharray stroke-dashoffset opacity font-family font-size font-weight font-style letter-spacing text-anchor dominant-baseline dx dy rotate offset stop-color stop-opacity gradientUnits gradientTransform spreadMethod fx fy fr clip-path clipPathUnits'.split())
 ENUMS = {'fill-rule': 'nonzero evenodd', 'stroke-linecap': 'butt round square',
          'stroke-linejoin': 'miter round bevel', 'font-weight': 'normal bold 100 200 300 400 500 600 700 800 900',
          'font-style': 'normal italic oblique', 'text-anchor': 'start middle end',
          'dominant-baseline': 'auto alphabetic middle central hanging text-before-edge text-after-edge'}
-PROPS = set(ENUMS) | set('fill stroke stop-color opacity fill-opacity stroke-opacity stop-opacity stroke-width font-size stroke-miterlimit stroke-dashoffset stroke-dasharray font-family clip-path rx ry marker-end'.split())
+PROPS = set(ENUMS) | set('fill stroke stop-color opacity fill-opacity stroke-opacity stop-opacity stroke-width font-size stroke-miterlimit stroke-dashoffset stroke-dasharray font-family letter-spacing clip-path rx ry marker-end'.split())
 INHERITED = PROPS - {'opacity', 'clip-path', 'stop-color', 'stop-opacity', 'rx', 'ry'}
 NUMBER = r'[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)'
 IDENT = r'[A-Za-z_][A-Za-z0-9_-]*'
@@ -131,8 +131,10 @@ def value(prop, raw):
                 reject('unsupported-css', prop)
             if not any(scalar(t, 0, px=True) for t in re.split(r'[\s,]+', low)):
                 reject('unsupported-css', 'Zero dash array')
+    elif prop == 'letter-spacing':
+        scalar(low, px=True)
     elif prop == 'font-family':
-        name = r'(?:[A-Za-z][A-Za-z0-9_-]*(?: +[A-Za-z][A-Za-z0-9_-]*)*|"[A-Za-z][A-Za-z0-9_ -]*"|\'[A-Za-z][A-Za-z0-9_ -]*\')'
+        name = r'(?:-?[A-Za-z][A-Za-z0-9_-]*(?: +-?[A-Za-z][A-Za-z0-9_-]*)*|"[A-Za-z][A-Za-z0-9_ -]*"|\'[A-Za-z][A-Za-z0-9_ -]*\')'
         if not re.fullmatch(name + r'(?:\s*,\s*' + name + ')*', val):
             reject('unsupported-css', prop)
         return val
@@ -261,31 +263,39 @@ def check_ref(prop, val, ids, node, parent):
 
 
 def path_points(d):
-    tokens = re.findall(r'[MLHV]|' + NUMBER, d)
+    tokens = re.findall(r'[MLHVC]|' + NUMBER, d)
     if re.sub(r'[\s,]', '', ''.join(tokens)) != re.sub(r'[\s,]', '', d):
         reject('unsupported-css', 'Marker host path commands')
-    points, index, command = [], 0, None
+    points, tangent_base, index, command = [], None, 0, None
     while index < len(tokens):
-        if tokens[index] in {'M', 'L', 'H', 'V'}:
+        if tokens[index] in {'M', 'L', 'H', 'V', 'C'}:
             command = tokens[index]
             index += 1
-        count = 2 if command in {'M', 'L'} else 1
-        if command is None or index + count > len(tokens) or any(t in {'M', 'L', 'H', 'V'} for t in tokens[index:index+count]):
+        count = 6 if command == 'C' else 2 if command in {'M', 'L'} else 1
+        if command is None or index + count > len(tokens) or any(t in {'M', 'L', 'H', 'V', 'C'} for t in tokens[index:index+count]):
             reject('unsupported-css', 'Marker host path syntax')
         coords = [scalar(t) for t in tokens[index:index+count]]
         index += count
+        if command == 'C':
+            endpoint = tuple(coords[4:6])
+            cp1, cp2 = tuple(coords[0:2]), tuple(coords[2:4])
+            tangent_base = cp2 if cp2 != endpoint else cp1
+            points.append(endpoint)
+            continue
         if command in {'H', 'V'}:
             if not points:
                 reject('unsupported-css')
             coords = [coords[0], points[-1][1]] if command == 'H' else [points[-1][0], coords[0]]
         elif command == 'M' and points:
             reject('unsupported-css', 'Multiple subpaths')
+        if points:
+            tangent_base = points[-1]
         points.append(tuple(coords))
         if command == 'M':
             command = 'L'
-    if len(points) < 2 or points[-1] == points[-2]:
+    if len(points) < 2 or tangent_base is None or points[-1] == tangent_base:
         reject('unsupported-css', 'Degenerate marker tangent')
-    return points
+    return points, tangent_base
 
 
 def marker_definition(src, root, parent, computed):
@@ -412,7 +422,7 @@ def normalize_structure(raw):
             target = 'title' if key == 'aria-labelledby' or (key == 'aria-label' and 'aria-labelledby' not in attrs) else 'desc' if key == 'aria-describedby' else None
             accessibility.append(dict(element=loc[node], attribute=key, value=val, **({'target': target} if target else {'loss': 'lower-priority-label' if key == 'aria-label' else 'unsupported-semantics'})))
             del node.attrib[key]
-    # Restricted triangle markers on open M/L/H/V paths are expanded explicitly.
+    # Restricted triangle markers on open M/L/H/V/C paths are expanded explicitly.
     for node in list(root.iter()):
         marker = computed.get(node, {}).get('marker-end', 'none')
         node.attrib.pop('marker-end', None)
@@ -423,8 +433,8 @@ def normalize_structure(raw):
         src = ids[marker[5:-1]]
         rx, ry, child, paint, unit = markers[src]
         scale = scalar(computed[node].get('stroke-width', '1'), 0, px=True) if unit == 'strokeWidth' else 1
-        points = path_points(node.get('d', ''))
-        (x0, y0), (x, y) = points[-2:]
+        points, tangent_base = path_points(node.get('d', ''))
+        (x0, y0), (x, y) = tangent_base, points[-1]
         angle = math.degrees(math.atan2(y-y0, x-x0))
         container = parent[node]
         group = ET.Element('{' + NS + '}g', {'transform': f'translate({x:g} {y:g}) rotate({angle:g}) scale({scale:g}) translate({-rx:g} {-ry:g})', 'fill': paint, 'stroke': 'none'})
