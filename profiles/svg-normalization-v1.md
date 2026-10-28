@@ -6,6 +6,12 @@ Status: experimental input-processing profile, 2026-10-18. This English text is
 normative; MUST, MUST NOT, SHOULD and MAY have the meanings in SPEC.md. This is
 not a general CSS sanitizer or an extension of safe-svg-v1.
 
+Amended 2026-10-28 (Issue #3): `letter-spacing` is admitted as a property in
+section 3 and as a safe-svg-v1 attribute; curved (C-segment) marker-end hosts
+are admitted under section 3.1 with a defined tangent rule; the accepted
+font-family name forms are clarified in section 3. The Japanese translation
+carries the same amendments.
+
 ## 1. Purpose and compatibility
 
 A normalizer transforms a restricted CSS-styled SVG into an SVG satisfying
@@ -72,9 +78,10 @@ Allowed properties and values (property names are ASCII case-insensitive):
 | fill-rule | `nonzero`, `evenodd` |
 | stroke-linecap | `butt`, `round`, `square` |
 | stroke-linejoin | `miter`, `round`, `bevel` |
-| font-family | One or more comma-separated ASCII names, unquoted words separated by spaces or quoted names; no escapes |
+| font-family | One or more comma-separated ASCII names; no escapes. A name is a quoted name or one or more unquoted words separated by spaces. A quoted name uses single or double quotes and contains printable ASCII except the delimiting quote and backslash. An unquoted word is an identifier that MAY begin with `-` (for example `-apple-system`) |
 | font-weight | `normal`, `bold`, or 100, 200, …, 900 |
 | font-style | `normal`, `italic`, `oblique` |
+| letter-spacing | Signed decimal, optionally `px` |
 | text-anchor | `start`, `middle`, `end` |
 | dominant-baseline | `auto`, `alphabetic`, `middle`, `central`, `hanging`, `text-before-edge`, `text-after-edge` |
 | clip-path | `none` or exact `url(#ID)` to a local clipPath |
@@ -108,8 +115,13 @@ MUST be the viewport-contained triangle `M0,0 Lw,h/2 L0,h Z`, where w/h are the
 marker viewport dimensions. Paint MUST be a solid color, not none or a resource.
 
 marker-end MUST apply only to an open, single-subpath path with fill none, using
-absolute M/L/H/V segments (implicit repeated coordinates allowed), with a nonzero
-last segment. A host transform, opacity or clip-path declaration is unsupported
+absolute M/L/H/V/C segments (implicit repeated coordinates allowed). All other
+path commands, including S, Q, T and every relative form, MUST be rejected. The
+last segment MUST have a nonzero tangent: for an L, H or V segment the tangent is
+the segment direction; for a C segment the tangent is the vector from the second
+control point to the endpoint, falling back to the vector from the first control
+point to the endpoint when the former is zero, and a C segment whose endpoint
+equals both control points MUST be rejected. A host transform, opacity or clip-path declaration is unsupported
 in this baseline and MUST fail. A normalizer MUST compute the last tangent,
 orient the triangle to it, scale by the computed stroke-width for strokeWidth
 units (default 1), offset by refX/refY, and insert an ordinary path/group immediately
